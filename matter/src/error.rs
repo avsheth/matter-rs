@@ -41,9 +41,8 @@ pub enum Error {
     InvalidSignature,
     InvalidState,
     RwLock,
-    TLVNotFound,
-    TLVTypeMismatch,
     TruncatedPacket,
+    TLVError(matter_tlv::Error)
 }
 
 impl From<std::io::Error> for Error {

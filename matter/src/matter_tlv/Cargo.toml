@@ -1,0 +1,12 @@
+[package]
+name = "matter_tlv"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+byteorder = "1.4.3"
+log = { version = "0.4.14", features = ["max_level_debug", "release_max_level_debug"] }
+matter_macro_derive = { path = "../../../matter_macro_derive"}
+matter-iot = { path = "../../../matter"}

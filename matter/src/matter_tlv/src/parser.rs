@@ -1,8 +1,9 @@
-use crate::error::Error;
+use matter::error::Error as MatterErr;
 
 use byteorder::{ByteOrder, LittleEndian};
 use log::{error, info};
 use std::fmt;
+use crate::error::Error
 
 use super::{TagType, MAX_TAG_INDEX, TAG_MASK, TAG_SHIFT_BITS, TAG_SIZE_MAP, TYPE_MASK};
 
@@ -261,13 +262,13 @@ static VALUE_SIZE_MAP: [usize; MAX_VALUE_INDEX] = [
 fn read_length_value<'a>(
     size_of_length_field: usize,
     t: &TLVListIterator<'a>,
-) -> Result<(usize, &'a [u8]), Error> {
+) -> Result<(usize, &'a [u8]), MatterErr> {
     // The current offset is the string size
     let length: usize = LittleEndian::read_uint(&t.buf[t.current..], size_of_length_field) as usize;
     // We'll consume the current offset (len) + the entire string
     if length + size_of_length_field > t.left {
         // Return Error
-        Err(Error::NoSpace)
+        Err(MatterErr::NoSpace)
     } else {
         Ok((
             // return the additional size only
@@ -463,7 +464,7 @@ impl<'a> TLVElement<'a> {
                 return Ok(a);
             }
         }
-        Err(Error::NoTagFound)
+        Err(MatterErr::NoTagFound)
     }
 
     pub fn get_tag(&self) -> TagType {
@@ -689,26 +690,26 @@ impl<'a> Iterator for TLVContainerIterator<'a> {
     }
 }
 
-pub fn get_root_node(b: &[u8]) -> Result<TLVElement, Error> {
+pub fn get_root_node(b: &[u8]) -> Result<TLVElement, MatterErr> {
     TLVList::new(b)
         .iter()
         .next()
-        .ok_or(Error::InvalidData)
+        .ok_or(MatterErr::InvalidData)
 }
 
-pub fn get_root_node_struct(b: &[u8]) -> Result<TLVElement, Error> {
+pub fn get_root_node_struct(b: &[u8]) -> Result<TLVElement, MatterErr> {
     TLVList::new(b)
         .iter()
         .next()
-        .ok_or(Error::InvalidData)?
+        .ok_or(MatterErr::InvalidData)?
         .confirm_struct()
 }
 
-pub fn get_root_node_list(b: &[u8]) -> Result<TLVElement, Error> {
+pub fn get_root_node_list(b: &[u8]) -> Result<TLVElement, MatterErr> {
     TLVList::new(b)
         .iter()
         .next()
-        .ok_or(Error::InvalidData)?
+        .ok_or(MatterErr::InvalidData)?
         .confirm_list()
 }
 
@@ -772,7 +773,7 @@ mod tests {
         get_root_node_list, get_root_node_struct, ElementType, Pointer, TLVElement, TLVList,
         TagType,
     };
-    use crate::error::Error;
+    use matter::error::Error as MatterErr;
 
     #[test]
     fn test_short_length_tag() {
@@ -1116,7 +1117,7 @@ mod tests {
                 element_type: ElementType::U8(1),
             }
         );
-        assert_eq!(cmd_path.find_tag(1), Err(Error::NoTagFound));
+        assert_eq!(cmd_path.find_tag(1), Err(MatterErr::NoTagFound));
 
         // This is the variable of the invoke command
         assert_eq!(

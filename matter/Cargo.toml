@@ -21,6 +21,7 @@ crypto_mbedtls = ["mbedtls"]
 crypto_esp_mbedtls = ["esp-idf-sys"]
 
 [dependencies]
+matter-tlv = { path = "../matter/src/matter-tlv"}
 boxslab = { path = "../boxslab"}
 matter_macro_derive = { path = "../matter_macro_derive"}
 bitflags = "1.3"

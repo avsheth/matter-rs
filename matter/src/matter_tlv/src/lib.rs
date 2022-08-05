@@ -1,4 +1,3 @@
-/* Tag Types */
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum TagType {
     Anonymous,
